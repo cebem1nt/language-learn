@@ -1,0 +1,113 @@
+$base-color:  #c5e5f8;
+$pre-color: #021024;
+$out-color: #5483B3;
+$head-color:  #052659;
+$main-color: #7DA0CA;
+
+::-webkit-scrollbar {
+    width: 5px;
+    position: absolute;
+    background: $head-color;
+}
+  
+::-webkit-scrollbar {
+    background: $head-color;
+}
+
+::-webkit-scrollbar-thumb {
+    background: $head-color;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    box-sizing: border-box;
+    font-optical-sizing: auto;
+    font-weight: normal;
+    font-style: normal;
+    background: $base-color;
+    color: $main-color;
+    margin: 0;
+}
+
+hr {
+    border: 1px solid $head-color;
+    border-radius: 100%;
+}
+
+h1, h2 {
+    color: $main-color;
+    font-weight: 700;
+    margin: 1vh 0;
+}
+
+h3, h4, h5, h6 {
+    color: #556cb7;
+    font-weight: 600;
+    margin: 0.5vh 0;
+}
+
+small {
+    color: rgb(123, 1, 1);
+    user-select: none;
+
+}
+
+button {
+    background-color: $out-color;
+    color: $base-color;
+    border: none;
+    padding: 0;
+    border-radius: 1vh;
+    user-select: none;
+    cursor: pointer;
+    padding: 1vh 2vh;
+    &[disabled]{
+        cursor: not-allowed;
+    }
+}
+
+
+ul, ol {
+    list-style: none;
+}
+
+input, output {
+    font-size: small;
+    outline: none;
+    border: none;
+    padding: 1vh 2vh;
+    border-radius: 1vh;
+    background-color: $main-color;
+    color: $head-color;
+}
+
+input::placeholder {
+    color: $head-color;
+}
+
+h3 {
+    font-size: x-large;
+}
+
+select {
+    color: azure;
+    border: none;
+    border-radius: 1vh;
+    font-size: x-large;
+    width: auto;
+    background-color: $head-color;
+    padding: 1vh;
+    option {
+        color: azure;
+        font-size: x-large;
+        background-color: $head-color;
+    }
+}
+
+small {
+    padding: 0 0.5vh;
+    text-align: center;
+}
