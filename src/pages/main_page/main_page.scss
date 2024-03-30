@@ -5,10 +5,12 @@ $head-color: #021024;
 $main-color: #7DA0CA;
 
 nav.nav {
+    position: sticky;
+    top: 1vh;
     user-select: none;
     display: flex;
     background-color: $pre-color;
-    border-radius: 2vh;
+    border-radius: 1vh;
     padding: 2vh;
     margin-bottom: 2vh;
 
@@ -62,15 +64,17 @@ nav.nav {
 .info-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(6, 1fr);
+    grid-template-rows: repeat(8, 1fr);
     gap: 1.5vh;
     grid-template-areas:
-      "inf maininfo maininfo maininfo maininfo"
-      "inf maininfo maininfo maininfo maininfo"
-      "inf maininfo maininfo maininfo maininfo"
-      "inf maininfo maininfo maininfo maininfo"
-      "inf maininfo maininfo maininfo maininfo"
-      "inf maininfo maininfo maininfo maininfo"
+      "inf inf inf inf inf"
+      "maininfo maininfo maininfo maininfo maininfo"
+      "maininfo maininfo maininfo maininfo maininfo"
+      "maininfo maininfo maininfo maininfo maininfo"
+      "maininfo maininfo maininfo maininfo maininfo"
+      "maininfo maininfo maininfo maininfo maininfo"
+      "maininfo maininfo maininfo maininfo maininfo"
+      "maininfo maininfo maininfo maininfo maininfo"
 } 
   
 .add-info { 
@@ -78,7 +82,6 @@ nav.nav {
     background-color: $pre-color;
     padding: 2vh;
     border-radius: 2vh;
-    height: 90vh;
     overflow-y: auto;
 }
   
@@ -214,13 +217,6 @@ nav.nav {
         color: $base-color;
         padding: 0 2vh;
     }
-    button.show-trns {
-        margin-top: 2vh;
-        font-size: medium;
-        padding: 1vh 8vh;
-        width: 100%;
-        height: auto;
-    }
 }
 
 .foreign-card {
@@ -239,6 +235,7 @@ nav.nav {
 
 .word-div {
     border-radius: 2vh;
+    background-color: #5483B3;
 }
 
 .header h2 {
@@ -247,11 +244,32 @@ nav.nav {
     border-radius: 2vh;
     background-color: $out-color;
 }
+.stats{
+    display: flex;
+    gap: 2vh;
+    h5 {
+        width: 15vh;
+        text-align: center;
+        background-color: $out-color;
+        color: $main-color;
+        padding: 2vh;
+        border-radius: 2vh;
+        margin-bottom: 1vh;
+    }
+}
 
-.stats h5 {
-    background-color: $out-color;
-    color: $main-color;
-    padding: 2vh;
-    border-radius: 2vh;
-    margin-bottom: 1vh;
+.hidden-text {
+    opacity: 0;
+}
+
+.card-controls{
+    display: flex;
+    justify-content: center;
+    button.show-trns {
+        margin-top: 2vh;
+        font-size: medium;
+        padding: 1vh 8vh;
+        height: auto;
+        background-color: $out-color;
+    }
 }

@@ -1,11 +1,14 @@
 import { getLocalStorageItem, setLocalStorageItem } from "./storage";
-import { getLanguages, getWords } from "./words";
+import { getLanguages, getWords, Word } from "./words";
  
 export interface User{
-    words: number
-    attempts: number
-    forgotten: number
-    remembered: number
+    wordsQuantity: number
+    attemptsQuantity: number
+    forgottenQuantity: number
+    rememberedQuantity: number
+    words: Word[]
+    native: string | null
+    foreign: string | null
 }
 
 export function isRegistered(): boolean{
@@ -19,19 +22,23 @@ export function isRegistered(): boolean{
 export function getAllUserData(): User {
     const user = getLocalStorageItem('USER')
     if (!user) {
+        const languagePair = getLanguages()
         return {
-            words: getWordsCuantity(),
-            attempts: 0,
-            forgotten: 0,
-            remembered: 0
+            wordsQuantity: getWordsCuantity(),
+            attemptsQuantity: 0,
+            forgottenQuantity: 0,
+            rememberedQuantity: 0,
+            words: getWords(),
+            native: languagePair[0],
+            foreign: languagePair[1]
         }
     }
     return user
 }
 
-export function setUserData(par: keyof User, val: number): void {
+export function setUserData <K extends keyof User> (key: K, val: User[K]): void {
     const userData = getAllUserData()
-    userData[par] = val
+    userData[key] = val
     setLocalStorageItem('USER', userData)
 }
 
@@ -41,13 +48,13 @@ export function getWordsCuantity(): number {
 }
 
 export function getAttemptsCuantity(): number {
-    return getAllUserData().attempts
+    return getAllUserData().attemptsQuantity
 }
 
 export function getForgottenCuantity(): number {
-    return getAllUserData().forgotten
+    return getAllUserData().forgottenQuantity
 }
 
 export function getRememberedCuantity(): number {
-    return getAllUserData().remembered
+    return getAllUserData().rememberedQuantity
 }

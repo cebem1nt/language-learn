@@ -6,13 +6,13 @@ export type Word = {
     id: number;
 }
 
-export function getLanguages(): string[] | null {
+export function getLanguages(): string[] | null[] {
     const native = getLocalStorageItem('NATIVE')
     const foreign = getLocalStorageItem('FOREIGN')
     if (native && foreign) {
         return [native, foreign]
     }
-    return null
+    return [null, null]
 }
 
 export function getWords(): Word[] {
@@ -47,14 +47,11 @@ export function lastWordId(): number {
     }
 }
 
-export function* yieldWord (words: Word[]): Generator<Word, void, unknown> {
+export function shuffleWords (words: Word[]): Word[]{
     const shuffled = [...words];
     for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-
-    for (const item of shuffled) {
-        yield item;
-    }
+    return shuffled
 }
