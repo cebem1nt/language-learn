@@ -1,5 +1,4 @@
 import {Route, Routes, Link, useNavigate } from 'react-router-dom'
-import { getLocalStorageItem, removeLocalStorageItem } from '../../modules/storage'
 import { useEffect, useState } from 'react'
 import { Word, isWords, addWord, lastWordId, getWords, shuffleWords } from '../../modules/words'
 import sadFace from '../../assets/images/not-happy-face.svg'
@@ -9,7 +8,7 @@ import chR from '../../assets/images/chevron-right.svg'
 import chL from '../../assets/images/chevron-left.svg'
 
 import notebook from '../../assets/images/notebook.svg'
-import { getAllUserData, getAttemptsCuantity, getForgottenCuantity, getRememberedCuantity, getWordsCuantity, isRegistered, setUserData, User } from '../../modules/user'
+import { getAllUserData, getAttemptsQuantity, getForgottenQuantity, getRememberedQuantity, getWordsCuantity, isRegistered, setUserData, User } from '../../modules/user'
 
 
 export default function HomePage () {
@@ -152,28 +151,41 @@ function WordsList() {
 }
 
 function MainInfo( { userData } : {userData: User} ) {
-    const [nativeHidden, setNativeHidden] = useState(true)
+    const [isNativeHidden, setIsNativeHidden] = useState(true)
+    
     const [pointer, updatePointer] = useState(0)
     const [shuffledWords, setShuffledWords] = useState(shuffleWords(userData.words))
     const [word, setWord] = useState(shuffledWords[0])
     const [isProcessing, setIsProcessing] = useState(false)
 
     const showTranslation = () => { 
-        setNativeHidden(!nativeHidden)
+        setIsNativeHidden(!isNativeHidden)
     } 
+
+    const forgottenWord = () => {
+        setUserData('forgottenQuantity', getForgottenQuantity() + 1)
+        showTranslation()
+        nextWord(true)
+    }
 
     const hideRandomTranslation = () => {
         const randInt = Math.floor(Math.random() * (6 - 0 + 1)) + 0
         if (randInt > 4) {
-            setNativeHidden(false)
+            setIsNativeHidden(false)
         } else {
-            setNativeHidden(true)
+            setIsNativeHidden(true)
         }
     }
 
-    const nextWord = () => {
-        
+    const nextWord = (isForgotten=false) => {
+        setUserData('attemptsQuantity', getAttemptsQuantity() + 1)
         setIsProcessing(true)
+        showTranslation()
+        
+        if (!isForgotten) {
+            setUserData('rememberedQuantity', getRememberedQuantity() + 1)
+        }
+
         let i: number
         if (pointer < userData.words.length-1) {
             updatePointer(pointer + 1)
@@ -184,12 +196,11 @@ function MainInfo( { userData } : {userData: User} ) {
             i = 0
         }
 
-        showTranslation()
         setTimeout(() => {
             setWord(shuffledWords[i])
             hideRandomTranslation()
             setIsProcessing(false)
-        }, 1000)
+        }, 2000)
       
         
     }
@@ -210,33 +221,36 @@ function MainInfo( { userData } : {userData: User} ) {
         return (
             <div className="main-info">
                 <div className="start-learning">
-                    <div className="header">
-                        <h2>Lets learn</h2>
-                    </div>
-                    <hr />
+
                     <div className="learning-container">
                         <button className='prev-word' onClick={previousWord} disabled={pointer === 0 || isProcessing}>
                             <img src={chL} alt="next" />
                         </button>
-                            <div className="card">
-                                {   !nativeHidden &&
-                                    <div className='word-div'>
-                                        <h3 className='native-card'> {word.native} </h3>
-                                    </div>
+                            <div className={ `card animate__animated ${isProcessing ? 'animate__flipInY' : 'animate__fadeIn'}`}>
+                                {   !isNativeHidden &&
+                                    <>
+                                        <div className='word-div'>
+                                            <h3 className='card-text'> {word.native} </h3>
+                                        </div>
+                                        <h3 className='lang-info'> {userData.native} </h3>
+                                    </>
                                 }
                                 {
-                                    nativeHidden && 
-                                    <div className='word-div'>
-                                        <h3 className='foreign-card'> {word.foreign}</h3>
-                                    </div>
+                                    isNativeHidden && 
+                                    <>
+                                        <div className='word-div'>
+                                            <h3 className='card-text'> {word.foreign}</h3>
+                                        </div>
+                                        <h3 className='lang-info'> {userData.foreign} </h3>
+                                    </>
                                 }
                             </div>
-                        <button className='next-word' onClick={nextWord} disabled={isProcessing}>
+                        <button className='next-word' onClick={()=> {nextWord()}} disabled={isProcessing}>
                             <img src={chR} alt="next" />
                         </button>
                     </div>
                     <div className="card-controls">
-                        <button className='show-trns' onClick={ showTranslation }>i forgot</button>
+                        <button className='show-trns' onClick={ forgottenWord }>i forgot</button>
                     </div>
                 </div>
             </div>

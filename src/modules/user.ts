@@ -47,14 +47,14 @@ export function getWordsCuantity(): number {
     return words.length
 }
 
-export function getAttemptsCuantity(): number {
+export function getAttemptsQuantity(): number {
     return getAllUserData().attemptsQuantity
 }
 
-export function getForgottenCuantity(): number {
+export function getForgottenQuantity(): number {
     return getAllUserData().forgottenQuantity
 }
 
-export function getRememberedCuantity(): number {
+export function getRememberedQuantity(): number {
     return getAllUserData().rememberedQuantity
 }
