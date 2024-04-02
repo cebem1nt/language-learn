@@ -171,11 +171,18 @@ nav.nav {
     color: $main-color;
 }
 
+.words {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+}
+
 .word {
     margin: 1vh 0.5vh 2vh 0.5vh;
     background-color: $out-color;
     border-radius: 2vh;
     padding: 1vh;
+    width: 15vh;
     h5 {
         text-align: center;
         color: $main-color;

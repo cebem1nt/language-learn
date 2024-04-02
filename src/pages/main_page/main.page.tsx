@@ -1,5 +1,5 @@
 import {Route, Routes, Link, useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Word, isWords, addWord, lastWordId, getWords, shuffleWords } from '../../modules/words'
 import sadFace from '../../assets/images/not-happy-face.svg'
 import './main_page.scss'
@@ -151,9 +151,10 @@ function WordsList() {
 }
 
 function MainInfo( { userData } : {userData: User} ) {
+    let pointer = useRef(0)
+
     const [isNativeHidden, setIsNativeHidden] = useState(true)
     
-    const [pointer, updatePointer] = useState(0)
     const [shuffledWords, setShuffledWords] = useState(shuffleWords(userData.words))
     const [word, setWord] = useState(shuffledWords[0])
     const [isProcessing, setIsProcessing] = useState(false)
@@ -186,18 +187,15 @@ function MainInfo( { userData } : {userData: User} ) {
             setUserData('rememberedQuantity', getRememberedQuantity() + 1)
         }
 
-        let i: number
-        if (pointer < userData.words.length-1) {
-            updatePointer(pointer + 1)
-            i = pointer + 1
+        if (pointer.current < userData.words.length-1) {
+            pointer.current = pointer.current + 1
         } else {
-            updatePointer(0)
+            pointer.current = 0
             setShuffledWords(shuffleWords(userData.words))
-            i = 0
         }
 
         setTimeout(() => {
-            setWord(shuffledWords[i])
+            setWord(shuffledWords[pointer.current])
             hideRandomTranslation()
             setIsProcessing(false)
         }, 2000)
@@ -206,15 +204,13 @@ function MainInfo( { userData } : {userData: User} ) {
     }
 
     const previousWord = () => {
-        let i: number
         showTranslation()
-        if (pointer > 0) {
-            updatePointer(pointer - 1)
-            i = pointer - 1
+        if (pointer.current > 0) {
+            pointer.current = pointer.current - 1 
         } else {
-            i = pointer
+            pointer.current = pointer.current
         }
-        setWord(shuffledWords[i])
+        setWord(shuffledWords[pointer.current])
     }
 
     if (isWords()) {
@@ -223,7 +219,7 @@ function MainInfo( { userData } : {userData: User} ) {
                 <div className="start-learning">
 
                     <div className="learning-container">
-                        <button className='prev-word' onClick={previousWord} disabled={pointer === 0 || isProcessing}>
+                        <button className='prev-word' onClick={previousWord} disabled={pointer.current === 0 || isProcessing}>
                             <img src={chL} alt="next" />
                         </button>
                             <div className={ `card animate__animated ${isProcessing ? 'animate__flipInY' : 'animate__fadeIn'}`}>
