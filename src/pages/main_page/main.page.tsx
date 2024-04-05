@@ -1,13 +1,18 @@
 import {Route, Routes, Link, useNavigate } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Word, isWords, addWord, lastWordId, getWords, shuffleWords } from '../../modules/words'
-import sadFace from '../../assets/images/not-happy-face.svg'
+import { Word, isWords, addWord, lastWordId, shuffleWords } from '../../modules/words'
 import './main_page.scss'
 import { requestTranslateInNative } from '../../modules/requests'
+
 import chR from '../../assets/images/chevron-right.svg'
 import chL from '../../assets/images/chevron-left.svg'
-
+import sadFace from '../../assets/images/not-happy-face.svg'
 import notebook from '../../assets/images/notebook.svg'
+import star from '../../assets/images/star.svg'
+import sadMask from '../../assets/images/sad-mask.svg'
+import happyMask from '../../assets/images/happy-mask.svg'
+
+
 import { getAllUserData, getAttemptsQuantity, getForgottenQuantity, getRememberedQuantity, getWordsCuantity, isRegistered, setUserData, User } from '../../modules/user'
 
 
@@ -26,8 +31,22 @@ export default function HomePage () {
             <nav className="nav">
                     <div className="position">
                         <div className="values"> 
-                            <img src={notebook} alt="attempts" title='number of times you learned a word' />
-                            <h2>{userData.attemptsQuantity}</h2>
+                            <div className="value">
+                                <img src={notebook} alt="words" title='your words' />
+                                <h2>{userData.wordsQuantity}</h2>
+                            </div>
+                            <div className="value">
+                                <img src={star} alt="attempts" title='your attempts' />
+                                <h2>{userData.attemptsQuantity}</h2>
+                            </div>
+                            <div className="value">
+                                <img src={sadMask} alt="attempts" title='your frogotten words' />
+                                <h2>{userData.forgottenQuantity}</h2>
+                            </div>
+                            <div className="value">
+                                <img src={happyMask} alt="attempts" title='your remembered words' />
+                                <h2>{userData.rememberedQuantity}</h2>
+                            </div>
                         </div>
                     </div>
 
@@ -38,27 +57,11 @@ export default function HomePage () {
             </nav>
             <div className="info-grid">
                 <Routes>
-                    <Route path='/' element={<Home userData={userData}/>}/>
+                    <Route path='/' element={<MainInfo userData={userData}/>}/>
                     <Route path='/words' element={<Words />}/>
                 </Routes>
             </div>
         </div>
-    )
-}
-
-function Home ({ userData } : {userData: User}) {
-    return (
-        <>
-            <div className="add-info">
-                <div className="stats">
-                    <h5>words: {userData.wordsQuantity}</h5>
-                    <h5>attempts: {userData.attemptsQuantity}</h5>
-                    <h5>forgotten: {userData.forgottenQuantity}</h5>
-                    <h5>correct: {userData.rememberedQuantity}</h5>
-                </div>
-            </div>
-            <MainInfo userData={userData}/>
-        </>
     )
 }
 
@@ -93,7 +96,6 @@ function Words() {
 
     return (
         <>
-            <WordsList />
             <div className="main-info">
                 <div className="header"> <h2>Your words</h2> </div>
                 <hr />
@@ -117,37 +119,6 @@ function Words() {
             </div>
         </>
     )
-}
-
-
-function WordsList() {
-    if (!isWords()) {
-        return (
-            <div className="add-info">
-                <div>You dont have any words yet</div>
-            </div>
-        )
-    } else {
-        const w = getWords()
-        const words = w.map( (word) => {
-            return (
-             <div key={word.id} className='word'>
-                 <h5 className='word-foreign'>{word.foreign}</h5>
-                 <h5 className='word-native'>{word.native}</h5>
-             </div>
-            )
-         })
-
-        return (
-            <div className="add-info">
-                <div className="words-list">
-                    <div className='words'>
-                        {words}
-                    </div>
-                </div>
-            </div>
-        )
-    }
 }
 
 function MainInfo( { userData } : {userData: User} ) {

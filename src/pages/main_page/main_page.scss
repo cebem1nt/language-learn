@@ -41,16 +41,19 @@ nav.nav {
 
     .values {
         display: flex;
-        align-items: center;
-        gap: 2vh;
-        padding-left: 2vh;
-        h2 {
-            color: $out-color;
-            margin: 0;
-        }
-        img {
-            width: 2.7vh;
-            height: 2.7vh;
+        gap: 5vh;
+        .value {
+            display: flex;
+            align-items: center;
+            gap: 2vh;
+            h2 {
+                color: $out-color;
+                margin: 0;
+            }
+            img {
+                width: 2.7vh;
+                height: 2.7vh;
+            }
         }
     }
 }
@@ -64,10 +67,9 @@ nav.nav {
 .info-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-rows: repeat(7, 1fr);
     gap: 1.5vh;
     grid-template-areas:
-      "inf inf inf inf inf"
       "maininfo maininfo maininfo maininfo maininfo"
       "maininfo maininfo maininfo maininfo maininfo"
       "maininfo maininfo maininfo maininfo maininfo"
@@ -76,14 +78,6 @@ nav.nav {
       "maininfo maininfo maininfo maininfo maininfo"
       "maininfo maininfo maininfo maininfo maininfo"
 } 
-  
-.add-info { 
-    grid-area: inf; 
-    background-color: $pre-color;
-    padding: 2vh;
-    border-radius: 2vh;
-    overflow-y: auto;
-}
   
 .main-info { 
     grid-area: maininfo; 
