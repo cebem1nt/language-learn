@@ -1,4 +1,5 @@
 import { getLocalStorageItem, setLocalStorageItem } from './storage'
+import { setUserData } from './user';
 
 export type Word = {
     native: string
@@ -24,6 +25,7 @@ export function getWords(): Word[] {
 
 export function setWords( words: Word[] ): void {
     setLocalStorageItem('WORDS', words)
+    setUserData('words', words)
 }
 
 export function isWords (): boolean {

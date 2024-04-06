@@ -83,7 +83,7 @@ nav.nav {
     grid-area: maininfo; 
     background-color: $pre-color;
     border-radius: 2vh;
-    padding: 2vh;
+    padding: 3vh;
     height: 90vh;
 }
 
@@ -130,11 +130,59 @@ nav.nav {
 
 .set-words-wrap {
     display: flex;
-    justify-content: center;
-    margin-top: 10vh;
+    width: 90%;
+    margin: 10vh auto 5vh auto;
     gap: 3vh;
 }
 
+.words-area-wrap{
+    width: 90%;
+    height: 30%;
+    margin: 0 auto;
+}
+
+.words-area{
+    height: 100%;
+    background-color: $out-color;
+    border-radius: 2vh;
+    display: flex;
+    flex-direction: column;
+    padding: 3vh;
+    overflow-y: auto;
+    &::-webkit-scrollbar{
+        background-color: $base-color;
+        border-radius: 2vh;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $main-color;
+        border-radius: 5vh;
+    }
+}
+
+.words-page-word {
+    display: flex;
+    justify-content: space-around;
+    border-radius: 2vh;
+    padding: 1vh 0;
+    h5{
+        width: 100%;
+        text-align: center;
+    }
+}
+
+.even {
+    background-color: $main-color;
+    h5 {
+        color: $out-color;
+    }
+}
+
+.odd {
+    background-color: $out-color;
+    h5{
+        color: $main-color;
+    }
+}
 
 .set-words, .get-translation{
     background-color: $out-color;
@@ -142,8 +190,8 @@ nav.nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 6vh 0vh;
-    width: 40%;
+    padding: 9vh 4vh;
+    width: 50%;
     input, output {
         display: flex;
         align-items: center;
@@ -236,12 +284,6 @@ nav.nav {
     margin-top: 10vh;
 }
 
-.header h2 {
-    width: fit-content;
-    padding: 0 3.5vh;
-    border-radius: 2vh;
-    background-color: $out-color;
-}
 .stats{
     display: flex;
     gap: 2vh;

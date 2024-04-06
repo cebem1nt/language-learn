@@ -57,19 +57,29 @@ export default function HomePage () {
             </nav>
             <div className="info-grid">
                 <Routes>
-                    <Route path='/' element={<MainInfo userData={userData}/>}/>
-                    <Route path='/words' element={<Words />}/>
+                    <Route path='/' element={<MainInfo userData={userData} />}/>
+                    <Route path='/words' element={<Words userData={userData} />}/>
                 </Routes>
             </div>
         </div>
     )
 }
 
-function Words() {
+function Words({ userData } : {userData: User}) {
     const [nativeWord, setNativeWord] = useState('')
     const [foreignWord, setForeignWord] = useState('')
     const [nativeToTranslate, setNativeToTranslate] = useState ('')
     const [translationResponse, setTranslationResponse] = useState ('')
+
+    const userWords = userData.words.map(
+        (word) => {
+            const even = word.id % 2 == 0
+            return <div key={word.id} className={`words-page-word ${even ? 'even' : 'odd'}`}> 
+                <h5>{word.foreign}</h5>
+                <h5>{word.native}</h5>
+             </div>
+        }
+    )
 
     const handleNativeChange = (event: any) => { setNativeWord(event.target.value) }
     const handleForeignChange = (event: any) => { setForeignWord(event.target.value) }
@@ -95,29 +105,30 @@ function Words() {
     }
 
     return (
-        <>
-            <div className="main-info">
-                <div className="header"> <h2>Your words</h2> </div>
-                <hr />
-                <div className="set-words-wrap">
-                    <div className="set-words">
-                        <h3 className='in-h3'>Add word</h3>
-                        <input type="text" placeholder='in native language' onChange={handleNativeChange}/>
-                        <input type="text" placeholder='in foreign language' onChange={handleForeignChange}/>
-                        <button className='add-text-btn'
-                            onClick={ () => { formWordAndAddIt(nativeWord, foreignWord) } }>add word</button>
-                    </div>
+        <div className="main-info">
+            <div className="set-words-wrap">
+                <div className="set-words">
+                    <h3 className='in-h3'>Add word</h3>
+                    <input type="text" placeholder='in native language' onChange={handleNativeChange}/>
+                    <input type="text" placeholder='in foreign language' onChange={handleForeignChange}/>
+                    <button className='add-text-btn'
+                        onClick={ () => { formWordAndAddIt(nativeWord, foreignWord) } }>add word</button>
+                </div>
 
-                    <div className="get-translation">
-                        <h3 className='in-h3'>Get translation</h3>
-                        <input type="text" placeholder='native word' onChange={handleNativeTranslateChange}/>
-                        <output>{translationResponse}</output>
-                        <button className='add-text-btn'
-                            onClick={ getTranslation }>get translation</button>
-                    </div>
+                <div className="get-translation">
+                    <h3 className='in-h3'>Get translation</h3>
+                    <input type="text" placeholder='native word' onChange={handleNativeTranslateChange}/>
+                    <output>{translationResponse}</output>
+                    <button className='add-text-btn'
+                        onClick={ getTranslation }>get translation</button>
                 </div>
             </div>
-        </>
+            <div className="words-area-wrap">
+                <div className="words-area">
+                    {userWords}
+                </div>
+            </div>
+        </div>
     )
 }
 
