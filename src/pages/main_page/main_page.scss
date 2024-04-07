@@ -5,18 +5,12 @@ $head-color: #021024;
 $main-color: #7DA0CA;
 
 nav.nav {
+    display: flex;
     position: sticky;
     top: 1vh;
-    user-select: none;
-    display: flex;
-    background-color: $pre-color;
     border-radius: 1vh;
+    margin-bottom: 1vh;
     padding: 2vh;
-    margin-bottom: 2vh;
-
-    h2 {
-        font-size: medium;
-    }
             
     ul {
         display: flex;
@@ -27,9 +21,12 @@ nav.nav {
         li {
             display: flex;
             align-items: center;
-            background-color: $out-color;
+            background: $out-color;
             border-radius: 2vh;
             padding: 0 4vh;
+            h4 {
+                color: $main-color;
+            }
         }
     }
 
@@ -82,8 +79,8 @@ nav.nav {
 .main-info { 
     grid-area: maininfo; 
     background-color: $pre-color;
-    border-radius: 2vh;
-    padding: 3vh;
+    border-radius: 1vh;
+    padding: 2vh;
     height: 90vh;
 }
 
@@ -160,13 +157,15 @@ nav.nav {
 }
 
 .words-page-word {
-    display: flex;
-    justify-content: space-around;
     border-radius: 2vh;
     padding: 1vh 0;
-    h5{
-        width: 100%;
-        text-align: center;
+    a {
+        display: flex;
+        justify-content: space-around;
+        h5{
+            width: 100%;
+            text-align: center;
+        }
     }
 }
 
@@ -311,5 +310,63 @@ nav.nav {
         padding: 1vh 8vh;
         height: auto;
         background-color: $out-color;
+    }
+}
+
+.word-info-container{
+    background-color: $out-color;
+    border-radius: 2vh;
+    padding: 3vh;
+    width: 85%;
+    margin: 5vh auto;
+}
+
+.word-foreign-native {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2vh;
+    input{
+        font-weight: 600;
+        text-align: center;
+        color: $main-color;
+        background-color: #02102400;
+        border-radius: 1vh;
+        font-size: larger;
+        &:enabled {
+            border-bottom: 1px solid $main-color;
+            border-radius: 0;
+        } 
+        &:disabled {
+            border-bottom: none;
+        }
+    }
+
+}
+
+.word-action {
+    display: flex;
+    justify-content: center;
+    gap: 5vh;
+}
+
+#remove-word, #edit-word {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5vh;
+    border-radius: 3vh;
+    img{
+        width: 6vh;
+        height: 6vh;
+    }
+}
+
+.add-settings {
+    width: 90%;
+    margin: 18vh auto 0 auto;
+    button {
+        background-color: rgb(193, 15, 15);
+        color: rgb(220, 220, 220);
     }
 }

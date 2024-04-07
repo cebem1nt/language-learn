@@ -6,7 +6,6 @@ import { setLocalStorageItem } from '../../modules/storage'
 import { useNavigate } from "react-router-dom"
 import { isRegistered } from '../../modules/user'
 
-
 interface SlideProps {
     onClick: () => void
     isVisible: boolean
@@ -24,6 +23,7 @@ interface LastSlideProps {
 }
 
 export default function WelcomePage() {
+
     const [slide, addSlide] = useState(1)
     const [isCurrentVisible, setIsCurrentVisible] = useState(true)
     const [prevSelected, setPrevSelected] = useState('en')

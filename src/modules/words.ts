@@ -49,6 +49,44 @@ export function lastWordId(): number {
     }
 }
 
+export function wordById(id: number) : Word {
+    const words = getWords()
+    const word = words.find( (x) => x.id === id )
+    if (!word) {
+        return {
+            native: 'incorrect word',
+            foreign: 'incorrect word',
+            id: -999
+        }
+    }
+    return word
+}
+
+export function editWord(id: number, newNative: string, newForeign: string): void {
+    const words = getWords()
+    const editedWords = words.map(word => {
+        if (word.id === id) {
+            return { 
+                id: id,
+                native: newNative,
+                foreign: newForeign
+            }
+        }
+        return word
+    })
+
+    setWords(editedWords)
+    setUserData('words', editedWords)
+}
+
+export function deleteWordById(id: number): void {
+    const words = getWords()
+    const removedWords = words.filter(word => word.id !== id)
+    setWords(removedWords)
+    setUserData('words', removedWords)
+    setUserData('wordsQuantity', removedWords.length)
+}
+
 export function shuffleWords (words: Word[]): Word[]{
     const shuffled = [...words];
     for (let i = shuffled.length - 1; i > 0; i--) {

@@ -1,8 +1,8 @@
 $base-color:  #c5e5f8;
-$pre-color: #021024;
-$out-color: #5483B3;
-$head-color:  #052659;
-$main-color: #7DA0CA;
+$pre-color:  #5483B3;
+$out-color: #052659;
+$head-color: #021024;
+$main-color: #7DA0CA;   
 
 ::-webkit-scrollbar {
     width: 5px;
@@ -32,6 +32,11 @@ body {
     margin: 0;
 }
 
+nav {
+    background: $pre-color;
+    user-select: none;
+}
+
 hr {
     border: 1px solid $head-color;
     border-radius: 100%;
@@ -44,8 +49,8 @@ h1, h2 {
 }
 
 h3, h4, h5, h6 {
-    color: #556cb7;
-    font-weight: 600;
+    color: $out-color;
+    font-weight: 500;
     margin: 0.5vh 0;
 }
 
@@ -56,7 +61,7 @@ small {
 }
 
 button {
-    background-color: $out-color;
+    background-color: $pre-color;
     color: $base-color;
     border: none;
     padding: 0;

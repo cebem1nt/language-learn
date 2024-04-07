@@ -1,6 +1,6 @@
-import {Route, Routes, Link, useNavigate } from 'react-router-dom'
+import {Route, Routes, Link, useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Word, isWords, addWord, lastWordId, shuffleWords } from '../../modules/words'
+import { Word, isWords, addWord, lastWordId, shuffleWords, wordById, deleteWordById, editWord } from '../../modules/words'
 import './main_page.scss'
 import { requestTranslateInNative } from '../../modules/requests'
 
@@ -11,19 +11,17 @@ import notebook from '../../assets/images/notebook.svg'
 import star from '../../assets/images/star.svg'
 import sadMask from '../../assets/images/sad-mask.svg'
 import happyMask from '../../assets/images/happy-mask.svg'
+import deleteImg from '../../assets/images/delete.svg'
+import editImg from '../../assets/images/edit.svg'
+import readyImg from '../../assets/images/ready.svg'
+
 
 
 import { getAllUserData, getAttemptsQuantity, getForgottenQuantity, getRememberedQuantity, getWordsCuantity, isRegistered, setUserData, User } from '../../modules/user'
+import { removeLocalStorageItem } from '../../modules/storage'
 
 
 export default function HomePage () {
-    const navigate = useNavigate()
-    useEffect(() => {
-        if (isRegistered()){
-            return navigate("/home")
-        }
-    }, [isRegistered])
-
     const [userData] = useState(getAllUserData())
 
     return (
@@ -33,34 +31,123 @@ export default function HomePage () {
                         <div className="values"> 
                             <div className="value">
                                 <img src={notebook} alt="words" title='your words' />
-                                <h2>{userData.wordsQuantity}</h2>
+                                <h4>{userData.wordsQuantity}</h4>
                             </div>
                             <div className="value">
                                 <img src={star} alt="attempts" title='your attempts' />
-                                <h2>{userData.attemptsQuantity}</h2>
+                                <h4>{userData.attemptsQuantity}</h4>
                             </div>
                             <div className="value">
                                 <img src={sadMask} alt="attempts" title='your frogotten words' />
-                                <h2>{userData.forgottenQuantity}</h2>
+                                <h4>{userData.forgottenQuantity}</h4>
                             </div>
                             <div className="value">
                                 <img src={happyMask} alt="attempts" title='your remembered words' />
-                                <h2>{userData.rememberedQuantity}</h2>
+                                <h4>{userData.rememberedQuantity}</h4>
                             </div>
                         </div>
                     </div>
 
                     <ul>
-                        <Link to='/home'> <li> <h2>home</h2> </li></Link>
-                        <Link to='/home/words'><li> <h2>words</h2> </li></Link>
+                        <Link to='/home'> <li> <h4>home</h4> </li></Link>
+                        <Link to='/home/words'><li> <h4>words</h4> </li></Link>
                     </ul>
             </nav>
             <div className="info-grid">
                 <Routes>
                     <Route path='/' element={<MainInfo userData={userData} />}/>
                     <Route path='/words' element={<Words userData={userData} />}/>
+                    <Route path='/words/word/:id' element={<WordPage userData={userData}/>} />
                 </Routes>
             </div>
+        </div>
+    )
+}
+
+function WordPage({ userData } : {userData: User}) {
+    const [isEdit, changeIsEdit] = useState(false)
+
+    const { id } = useParams<{ id: string }>()
+    const navigate = useNavigate()
+    const wordId = id ? parseInt(id, 10) : -999
+    const word = wordById(wordId)
+
+    const [newNative, setNewNative] = useState(word.native)
+    const [newForeign, setNewForeign] = useState(word.foreign)
+    const handleNativeChange = (event: any) => {setNewNative( event.target.value )}
+    const handleForeignChange = (event: any) => {setNewForeign( event.target.value )}
+  
+    if (wordId === undefined || !word || word?.id === -999) {
+      navigate('/home/words')
+      return null
+    }
+
+    
+    const deleteAllData = () => {
+        removeLocalStorageItem('USER')
+        removeLocalStorageItem('WORDS')
+        removeLocalStorageItem('NATIVE')
+        removeLocalStorageItem('FOREIGN')
+    }
+
+    const deleteWord = (id: number) => {
+        deleteWordById(id)
+        navigate('/home/words')
+    }
+
+    const editInput = () => {
+        changeIsEdit(!isEdit)
+        const tmpIsEdit = !isEdit
+        if (tmpIsEdit === false) {
+            editWord(word.id, newNative, newForeign)
+            window.location.reload()
+        }
+    }
+
+    return (
+        <div className='main-info'>
+            <div className="word-info-container">
+                <div className="word-foreign-native">
+                    <input className='word-info-foreign' value={newForeign} 
+                    disabled={!isEdit} onChange={ handleForeignChange }/>
+                    <input className='word-info-native' value={newNative} 
+                    disabled={!isEdit} onChange={ handleNativeChange }/>
+                </div>
+                <div className="word-action">
+                    <button id='remove-word'
+                    onClick={ () => { deleteWord(word.id) } } 
+                    ><img src={deleteImg} alt="delete word"/></button>
+                    <button id='edit-word'
+                    onClick={editInput}
+                    ><img src={isEdit ? readyImg : editImg} alt="edit word"/></button>
+                </div>
+            </div>
+            <WordsList userData={userData}/>
+            <div className="add-settings">
+                <button onClick={deleteAllData}>Delete all data</button>
+            </div>
+        </div>
+        
+    )
+}
+
+function WordsList ({ userData } : {userData: User}) {
+    const userWords = userData.words.map(
+        (word) => {
+            const even = word.id % 2 == 0
+            return (<div key={word.id} className={`words-page-word ${even ? 'even' : 'odd'}`}>
+                    <a href={`/home/words/word/${word.id}`}>
+                        <h5>{word.foreign}</h5>
+                        <h5>{word.native}</h5>
+                    </a>
+                </div>)
+        }
+    )
+    return (
+        <div className="words-area-wrap">
+                <div className="words-area">
+                    {userWords}
+                </div>
         </div>
     )
 }
@@ -70,16 +157,6 @@ function Words({ userData } : {userData: User}) {
     const [foreignWord, setForeignWord] = useState('')
     const [nativeToTranslate, setNativeToTranslate] = useState ('')
     const [translationResponse, setTranslationResponse] = useState ('')
-
-    const userWords = userData.words.map(
-        (word) => {
-            const even = word.id % 2 == 0
-            return <div key={word.id} className={`words-page-word ${even ? 'even' : 'odd'}`}> 
-                <h5>{word.foreign}</h5>
-                <h5>{word.native}</h5>
-             </div>
-        }
-    )
 
     const handleNativeChange = (event: any) => { setNativeWord(event.target.value) }
     const handleForeignChange = (event: any) => { setForeignWord(event.target.value) }
@@ -123,11 +200,7 @@ function Words({ userData } : {userData: User}) {
                         onClick={ getTranslation }>get translation</button>
                 </div>
             </div>
-            <div className="words-area-wrap">
-                <div className="words-area">
-                    {userWords}
-                </div>
-            </div>
+            <WordsList userData={userData}/>
         </div>
     )
 }
