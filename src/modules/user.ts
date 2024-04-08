@@ -13,7 +13,7 @@ export interface User{
 
 export function isRegistered(): boolean{
     const languages = getLanguages()
-    if (languages){
+    if (languages[0] && languages[1]){
         return true
     }
     return false

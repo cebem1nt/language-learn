@@ -1,5 +1,5 @@
 import {Route, Routes, Link, useNavigate, useParams } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect,  useRef, useState } from 'react'
 import { Word, isWords, addWord, lastWordId, shuffleWords, wordById, deleteWordById, editWord } from '../../modules/words'
 import './main_page.scss'
 import { requestTranslateInNative } from '../../modules/requests'
@@ -23,6 +23,14 @@ import { removeLocalStorageItem } from '../../modules/storage'
 
 export default function HomePage () {
     const [userData] = useState(getAllUserData())
+    const redirect = useNavigate()
+    useEffect(
+        () => {
+            if (!isRegistered()){
+                return redirect('/')
+            }
+        }
+    )
 
     return (
         <div className="container-welcome-page">
@@ -93,6 +101,7 @@ function WordPage({ userData } : {userData: User}) {
     const deleteWord = (id: number) => {
         deleteWordById(id)
         navigate('/home/words')
+        window.location.reload()
     }
 
     const editInput = () => {
@@ -132,17 +141,25 @@ function WordPage({ userData } : {userData: User}) {
 }
 
 function WordsList ({ userData } : {userData: User}) {
-    const userWords = userData.words.map(
-        (word) => {
-            const even = word.id % 2 == 0
-            return (<div key={word.id} className={`words-page-word ${even ? 'even' : 'odd'}`}>
-                    <a href={`/home/words/word/${word.id}`}>
-                        <h5>{word.foreign}</h5>
-                        <h5>{word.native}</h5>
-                    </a>
-                </div>)
-        }
-    )
+    let userWords
+    if (userData.words.length) {
+        userWords = userData.words.map(
+            (word, index) => {
+                const even = index % 2 === 0
+                return (<div key={word.id} className={`words-page-word ${even ? 'even' : 'odd'} animate__animated animate__fadeIn`}>
+                        <a href={`/home/words/word/${word.id}`}>
+                            <h5>{word.foreign}</h5>
+                            <h5>{word.native}</h5>
+                        </a>
+                    </div>)
+            }
+        )
+    } else {
+        userWords = (
+            <div className='words-list-no-words'> <h3>here is no words :(</h3> </div>
+        ) 
+    }
+    
     return (
         <div className="words-area-wrap">
                 <div className="words-area">
@@ -153,14 +170,22 @@ function WordsList ({ userData } : {userData: User}) {
 }
 
 function Words({ userData } : {userData: User}) {
+
+    
     const [nativeWord, setNativeWord] = useState('')
     const [foreignWord, setForeignWord] = useState('')
+
     const [nativeToTranslate, setNativeToTranslate] = useState ('')
     const [translationResponse, setTranslationResponse] = useState ('')
 
-    const handleNativeChange = (event: any) => { setNativeWord(event.target.value) }
-    const handleForeignChange = (event: any) => { setForeignWord(event.target.value) }
-    const handleNativeTranslateChange = (event: any) => { setNativeToTranslate(event.target.value) }
+    function handleForeignChange (event: any) { setForeignWord(event.target.value) }
+    function handleNativeTranslateChange (event: any) { setNativeToTranslate(event.target.value) }
+
+    function handleNativeChange (event: any) { 
+        setNativeWord(event.target.value) 
+        setNativeToTranslate(event.target.value) 
+    }
+
 
     const formWordAndAddIt = (n: string, f: string): void => {
         const word : Word = {
@@ -181,9 +206,14 @@ function Words({ userData } : {userData: User}) {
         } return
     }
 
+    function changeTranslateVis() {
+
+    }
+
     return (
         <div className="main-info">
             <div className="set-words-wrap">
+
                 <div className="set-words">
                     <h3 className='in-h3'>Add word</h3>
                     <input type="text" placeholder='in native language' onChange={handleNativeChange}/>
@@ -194,11 +224,13 @@ function Words({ userData } : {userData: User}) {
 
                 <div className="get-translation">
                     <h3 className='in-h3'>Get translation</h3>
-                    <input type="text" placeholder='native word' onChange={handleNativeTranslateChange}/>
+                    <input type="text" placeholder='native word' value={nativeToTranslate} onChange={handleNativeTranslateChange}/>
                     <output>{translationResponse}</output>
                     <button className='add-text-btn'
-                        onClick={ getTranslation }>get translation</button>
+                        onClick={ getTranslation }> get translation</button>
                 </div>
+                <button className="show-trns-menu-btn" onClick={changeTranslateVis}><img src={chL}/></button>
+
             </div>
             <WordsList userData={userData}/>
         </div>
@@ -263,7 +295,7 @@ function MainInfo( { userData } : {userData: User} ) {
         if (pointer.current > 0) {
             pointer.current = pointer.current - 1 
         } else {
-            pointer.current = pointer.current
+            pointer.current = 0
         }
         setWord(shuffledWords[pointer.current])
     }
