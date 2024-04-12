@@ -170,16 +170,15 @@ function WordsList ({ userData } : {userData: User}) {
 }
 
 function Words({ userData } : {userData: User}) {
-
-    
     const [nativeWord, setNativeWord] = useState('')
     const [foreignWord, setForeignWord] = useState('')
-
     const [nativeToTranslate, setNativeToTranslate] = useState ('')
     const [translationResponse, setTranslationResponse] = useState ('')
+    const [isHidden, setIsHidden] = useState(true)
+    let arrowImg = isHidden ? chR : chL
 
-    function handleForeignChange (event: any) { setForeignWord(event.target.value) }
-    function handleNativeTranslateChange (event: any) { setNativeToTranslate(event.target.value) }
+    const handleForeignChange = (event: any) => { setForeignWord(event.target.value) }
+    const handleNativeTranslateChange = (event: any) => { setNativeToTranslate(event.target.value) }
 
     function handleNativeChange (event: any) { 
         setNativeWord(event.target.value) 
@@ -187,49 +186,70 @@ function Words({ userData } : {userData: User}) {
     }
 
 
-    const formWordAndAddIt = (n: string, f: string): void => {
-        const word : Word = {
-            native: n,
-            foreign: f,
-            id: lastWordId() + 1
+    function formWordAndAddIt(nativeWord : string, foreignWord: string) {
+        if (nativeWord && foreignWord) {
+            addWord(
+                {
+                    native: nativeWord,
+                    foreign: foreignWord,
+                    id: lastWordId() + 1
+                }
+            )
+            setUserData('wordsQuantity', getWordsCuantity())
+            window.location.reload()
         }
-        addWord(word)
-        setUserData('wordsQuantity', getWordsCuantity())
-        window.location.reload()
     }
 
-    const getTranslation = async () => {
-        if (nativeToTranslate.length > 0) {
+    async function getTranslation() {
+        if (nativeToTranslate) {
             setTranslationResponse('translating...')
-            const response = await requestTranslateInNative(nativeToTranslate)
-            setTranslationResponse(response)
-        } return
-    }
-
-    function changeTranslateVis() {
-
+            try {
+                const response = await requestTranslateInNative(nativeToTranslate)
+                setTranslationResponse(response)
+            } catch (error) {
+                console.error('Translation error:', error)
+                setTranslationResponse('Translation error')
+            }
+        }
     }
 
     return (
         <div className="main-info">
             <div className="set-words-wrap">
 
-                <div className="set-words">
+                <div className="set-words animate__animated">
                     <h3 className='in-h3'>Add word</h3>
-                    <input type="text" placeholder='in native language' onChange={handleNativeChange}/>
-                    <input type="text" placeholder='in foreign language' onChange={handleForeignChange}/>
+
+                    <input type="text" 
+                           placeholder='in native language' 
+                           onChange={ handleNativeChange }/>
+
+                    <input type="text" 
+                           placeholder='in foreign language' 
+                           onChange={ handleForeignChange }/>
+
                     <button className='add-text-btn'
                         onClick={ () => { formWordAndAddIt(nativeWord, foreignWord) } }>add word</button>
                 </div>
 
-                <div className="get-translation">
+                <div className={`get-translation animate__animated ${isHidden ? "animate__fadeOutLeft" : "animate__fadeInRightBig"}`}>
                     <h3 className='in-h3'>Get translation</h3>
-                    <input type="text" placeholder='native word' value={nativeToTranslate} onChange={handleNativeTranslateChange}/>
+
+                    <input type="text" 
+                           placeholder='native word' 
+                           value={nativeToTranslate} 
+                           onChange={handleNativeTranslateChange}/>
+
                     <output>{translationResponse}</output>
+
                     <button className='add-text-btn'
                         onClick={ getTranslation }> get translation</button>
                 </div>
-                <button className="show-trns-menu-btn" onClick={changeTranslateVis}><img src={chL}/></button>
+
+                <button className={ `show-trns-menu-btn ${ isHidden ? "moveLeft" : "animate__animated animate__fadeInRightBig"}` }
+                        onClick={ ()=>{ setIsHidden(!isHidden) } } >
+                        <img src={arrowImg} alt='translate'/> 
+                </button>
 
             </div>
             <WordsList userData={userData}/>
