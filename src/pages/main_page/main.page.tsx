@@ -1,6 +1,6 @@
 import {Route, Routes, Link, useNavigate, useParams } from 'react-router-dom'
 import { useEffect,  useRef, useState } from 'react'
-import { Word, isWords, addWord, lastWordId, shuffleWords, wordById, deleteWordById, editWord } from '../../modules/words'
+import { isWords, addWord, lastWordId, shuffleWords, wordById, deleteWordById, editWord } from '../../modules/words'
 import './main_page.scss'
 import { requestTranslateInNative } from '../../modules/requests'
 
@@ -24,6 +24,7 @@ import { removeLocalStorageItem } from '../../modules/storage'
 export default function HomePage () {
     const [userData] = useState(getAllUserData())
     const redirect = useNavigate()
+
     useEffect(
         () => {
             if (!isRegistered()){
@@ -35,31 +36,31 @@ export default function HomePage () {
     return (
         <div className="container-welcome-page">
             <nav className="nav">
-                    <div className="position">
-                        <div className="values"> 
-                            <div className="value">
-                                <img src={notebook} alt="words" title='your words' />
-                                <h4>{userData.wordsQuantity}</h4>
-                            </div>
-                            <div className="value">
-                                <img src={star} alt="attempts" title='your attempts' />
-                                <h4>{userData.attemptsQuantity}</h4>
-                            </div>
-                            <div className="value">
-                                <img src={sadMask} alt="attempts" title='your frogotten words' />
-                                <h4>{userData.forgottenQuantity}</h4>
-                            </div>
-                            <div className="value">
-                                <img src={happyMask} alt="attempts" title='your remembered words' />
-                                <h4>{userData.rememberedQuantity}</h4>
-                            </div>
+                <div className="position">
+                    <div className="values"> 
+                        <div className="value">
+                            <img src={notebook} alt="words" title='your words' />
+                            <h4>{userData.wordsQuantity}</h4>
+                        </div>
+                        <div className="value">
+                            <img src={star} alt="attempts" title='your attempts' />
+                            <h4>{userData.attemptsQuantity}</h4>
+                        </div>
+                        <div className="value">
+                            <img src={sadMask} alt="attempts" title='your frogotten words' />
+                            <h4>{userData.forgottenQuantity}</h4>
+                        </div>
+                        <div className="value">
+                            <img src={happyMask} alt="attempts" title='your remembered words' />
+                            <h4>{userData.rememberedQuantity}</h4>
                         </div>
                     </div>
+                </div>
 
-                    <ul>
-                        <Link to='/home'> <li> <h4>home</h4> </li></Link>
-                        <Link to='/home/words'><li> <h4>words</h4> </li></Link>
-                    </ul>
+                <ul>
+                    <Link to='/home'> <li> <h4>home</h4> </li></Link>
+                    <Link to='/home/words'><li> <h4>words</h4> </li></Link>
+                </ul>
             </nav>
             <div className="info-grid">
                 <Routes>
@@ -73,43 +74,43 @@ export default function HomePage () {
 }
 
 function WordPage({ userData } : {userData: User}) {
-    const [isEdit, changeIsEdit] = useState(false)
-
     const { id } = useParams<{ id: string }>()
-    const navigate = useNavigate()
+
     const wordId = id ? parseInt(id, 10) : -999
     const word = wordById(wordId)
 
     const [newNative, setNewNative] = useState(word.native)
     const [newForeign, setNewForeign] = useState(word.foreign)
+    const [isEdit, changeIsEdit] = useState(false)
+    
     const handleNativeChange = (event: any) => {setNewNative( event.target.value )}
     const handleForeignChange = (event: any) => {setNewForeign( event.target.value )}
   
+    const navigate = useNavigate()
+
     if (wordId === undefined || !word || word?.id === -999) {
       navigate('/home/words')
       return null
     }
 
-    
-    const deleteAllData = () => {
+    function deleteAllData() {
         removeLocalStorageItem('USER')
         removeLocalStorageItem('WORDS')
         removeLocalStorageItem('NATIVE')
         removeLocalStorageItem('FOREIGN')
     }
 
-    const deleteWord = (id: number) => {
+    function deleteWord(id: number) {
         deleteWordById(id)
         navigate('/home/words')
-        window.location.reload()
     }
 
-    const editInput = () => {
+    function editInput() {
         changeIsEdit(!isEdit)
         const tmpIsEdit = !isEdit
         if (tmpIsEdit === false) {
             editWord(word.id, newNative, newForeign)
-            window.location.reload()
+            navigate(`/home/words/word/${id}`)
         }
     }
 
@@ -117,18 +118,26 @@ function WordPage({ userData } : {userData: User}) {
         <div className='main-info'>
             <div className="word-info-container">
                 <div className="word-foreign-native">
-                    <input className='word-info-foreign' value={newForeign} 
-                    disabled={!isEdit} onChange={ handleForeignChange }/>
-                    <input className='word-info-native' value={newNative} 
-                    disabled={!isEdit} onChange={ handleNativeChange }/>
+                    <input className='word-info-foreign' 
+                           value={newForeign} 
+                           disabled={!isEdit} 
+                           onChange={ handleForeignChange }/>
+
+                    <input className='word-info-native' 
+                           value={newNative} 
+                           disabled={!isEdit} 
+                           onChange={ handleNativeChange }/>
                 </div>
+
                 <div className="word-action">
                     <button id='remove-word'
-                    onClick={ () => { deleteWord(word.id) } } 
-                    ><img src={deleteImg} alt="delete word"/></button>
+                            onClick={ () => { deleteWord(word.id) } } >
+                            <img src={deleteImg} alt="delete word"/>
+                    </button>
                     <button id='edit-word'
-                    onClick={editInput}
-                    ><img src={isEdit ? readyImg : editImg} alt="edit word"/></button>
+                            onClick={editInput}>
+                            <img src={isEdit ? readyImg : editImg} alt="edit word"/>
+                    </button>
                 </div>
             </div>
             <WordsList userData={userData}/>
@@ -146,12 +155,14 @@ function WordsList ({ userData } : {userData: User}) {
         userWords = userData.words.map(
             (word, index) => {
                 const even = index % 2 === 0
-                return (<div key={word.id} className={`words-page-word ${even ? 'even' : 'odd'} animate__animated animate__fadeIn`}>
-                        <a href={`/home/words/word/${word.id}`}>
+                return (
+                    <div key={word.id} className={`words-page-word ${even ? 'even' : 'odd'} animate__animated animate__fadeIn`}>
+                        <Link to={`/home/words/word/${word.id}`}>
                             <h5>{word.foreign}</h5>
                             <h5>{word.native}</h5>
-                        </a>
-                    </div>)
+                        </Link>
+                    </div>
+                )
             }
         )
     } else {
@@ -162,9 +173,9 @@ function WordsList ({ userData } : {userData: User}) {
     
     return (
         <div className="words-area-wrap">
-                <div className="words-area">
-                    {userWords}
-                </div>
+            <div className="words-area">
+                {userWords}
+            </div>
         </div>
     )
 }

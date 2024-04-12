@@ -1,7 +1,7 @@
 import { getLocalStorageItem, setLocalStorageItem } from "./storage";
 import { getLanguages, getWords, Word } from "./words";
  
-export interface User{
+export interface User {
     wordsQuantity: number
     attemptsQuantity: number
     forgottenQuantity: number
@@ -10,6 +10,8 @@ export interface User{
     native: string | null
     foreign: string | null
 }
+
+export type UserKey = keyof User
 
 export function isRegistered(): boolean{
     const languages = getLanguages()
@@ -36,10 +38,14 @@ export function getAllUserData(): User {
     return user
 }
 
-export function setUserData <K extends keyof User> (key: K, val: User[K]): void {
+export function updateUserData ( userData: User = getAllUserData() ) {
+    setLocalStorageItem('USER', userData)
+} 
+
+export function setUserData <K extends UserKey> (key: K, val: User[K]): void {
     const userData = getAllUserData()
     userData[key] = val
-    setLocalStorageItem('USER', userData)
+    updateUserData(userData)
 }
 
 export function getWordsCuantity(): number {
